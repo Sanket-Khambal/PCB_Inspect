@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCB Defect Detection System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9ff;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f1ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .upload-text {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .preview-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .results-container {
+            display: none;
+        }
+
+        .verdict-badge {
+            display: inline-block;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 20px 0;
+            color: white;
+        }
+
+        .verdict-pass {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+
+        .verdict-marginal {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .verdict-fail {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .metric-card {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .defect-list {
+            margin-top: 20px;
+        }
+
+        .defect-item {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .defect-item.critical {
+            border-left-color: #ef4444;
+        }
+
+        .defect-item.warning {
+            border-left-color: #f59e0b;
+        }
+
+        .defect-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .defect-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .defect-confidence {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .defect-details {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .config-panel {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .config-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .config-label {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .config-value {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        input[type="range"] {
+            width: 150px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🔍 PCB Defect Detection System</h1>
+            <p>AI-powered automated optical inspection for printed circuit boards</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Panel: Upload -->
+            <div class="card">
+                <h2>📤 Upload PCB Image</h2>
+                
+                <!-- Configuration -->
+                <div class="config-panel">
+                    <div class="config-row">
+                        <span class="config-label">Confidence Threshold:</span>
+                        <span class="config-value" id="confValue">0.25</span>
+                    </div>
+                    <input type="range" id="confSlider" min="0.1" max="0.9" step="0.05" value="0.25">
+                    
+                    <div class="config-row" style="margin-top: 15px;">
+                        <span class="config-label">IoU Threshold:</span>
+                        <span class="config-value" id="iouValue">0.45</span>
+                    </div>
+                    <input type="range" id="iouSlider" min="0.1" max="0.9" step="0.05" value="0.45">
+                </div>
+
+                <!-- Upload Area -->
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">Click to upload or drag & drop</div>
+                    <div class="upload-subtext">JPG, JPEG, or PNG (Max 16MB)</div>
+                </div>
+                <input type="file" id="fileInput" accept=".jpg,.jpeg,.png">
+
+                <!-- Preview -->
+                <div class="preview-container" id="previewContainer" style="display: none;">
+                    <img id="previewImage" class="preview-image" alt="Preview">
+                    <button class="btn" id="analyzeBtn">🔍 Analyze Image</button>
+                </div>
+
+                <!-- Loading -->
+                <div class="loading" id="loadingDiv">
+                    <div class="spinner"></div>
+                    <p>Analyzing PCB... Please wait</p>
+                </div>
+            </div>
+
+            <!-- Right Panel: Results -->
+            <div class="card">
+                <h2>📊 Analysis Results</h2>
+                
+                <div id="initialMessage">
+                    <p style="text-align: center; color: #999; padding: 40px;">
+                        Upload a PCB image to see analysis results
+                    </p>
+                </div>
+
+                <div class="results-container" id="resultsContainer">
+                    <!-- Verdict -->
+                    <div style="text-align: center;">
+                        <div class="verdict-badge" id="verdictBadge">PASS</div>
+                    </div>
+
+                    <!-- Metrics -->
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value" id="totalDefects">0</div>
+                            <div class="metric-label">Total Defects</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="criticalDefects">0</div>
+                            <div class="metric-label">Critical</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="warningDefects">0</div>
+                            <div class="metric-label">Warnings</div>
+                        </div>
+                    </div>
+
+                    <!-- Annotated Image -->
+                    <div style="text-align: center; margin: 20px 0;">
+                        <h3 style="margin-bottom: 15px;">Detected Defects</h3>
+                        <img id="annotatedImage" class="preview-image" alt="Annotated">
+                    </div>
+
+                    <!-- Defect List -->
+                    <div class="defect-list" id="defectList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration sliders
+        const confSlider = document.getElementById('confSlider');
+        const confValue = document.getElementById('confValue');
+        const iouSlider = document.getElementById('iouSlider');
+        const iouValue = document.getElementById('iouValue');
+
+        confSlider.addEventListener('input', (e) => {
+            confValue.textContent = e.target.value;
+        });
+
+        iouSlider.addEventListener('input', (e) => {
+            iouValue.textContent = e.target.value;
+        });
+
+        // File upload handling
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const loadingDiv = document.getElementById('loadingDiv');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const initialMessage = document.getElementById('initialMessage');
+
+        let selectedFile = null;
+
+        // Click to upload
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.type.match('image/(jpeg|jpg|png)')) {
+                alert('Please upload a JPG, JPEG, or PNG image');
+                return;
+            }
+
+            selectedFile = file;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                previewContainer.style.display = 'block';
+                uploadArea.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Analyze button
+        analyzeBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            // Show loading
+            previewContainer.style.display = 'none';
+            loadingDiv.style.display = 'block';
+            initialMessage.style.display = 'none';
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+
+                displayResults(data);
+            } catch (error) {
+                alert('Error analyzing image: ' + error.message);
+            } finally {
+                loadingDiv.style.display = 'none';
+                uploadArea.style.display = 'block';
+            }
+        });
+
+        function displayResults(data) {
+            // Show results container
+            resultsContainer.style.display = 'block';
+
+            // Verdict
+            const verdictBadge = document.getElementById('verdictBadge');
+            verdictBadge.textContent = data.verdict;
+            verdictBadge.className = `verdict-badge verdict-${data.verdict.toLowerCase()}`;
+
+            // Metrics
+            document.getElementById('totalDefects').textContent = data.num_detections;
+            
+            const criticalCount = data.detections.filter(d => d.severity === 'CRITICAL').length;
+            const warningCount = data.detections.filter(d => d.severity === 'WARNING').length;
+            
+            document.getElementById('criticalDefects').textContent = criticalCount;
+            document.getElementById('warningDefects').textContent = warningCount;
+
+            // Annotated image
+            const annotatedImage = document.getElementById('annotatedImage');
+            annotatedImage.src = `/results/${data.annotated_filename}`;
+
+            // Defect list
+            const defectList = document.getElementById('defectList');
+            defectList.innerHTML = '';
+
+            if (data.detections.length === 0) {
+                defectList.innerHTML = '<p style="text-align: center; color: #22c55e; font-size: 1.2rem;">✅ No defects detected!</p>';
+            } else {
+                data.detections.forEach((defect, index) => {
+                    const item = document.createElement('div');
+                    item.className = `defect-item ${defect.severity.toLowerCase()}`;
+                    
+                    const confidence = (defect.confidence * 100).toFixed(1);
+                    
+                    item.innerHTML = `
+                        <div class="defect-header">
+                            <span class="defect-name">${index + 1}. ${defect.class}</span>
+                            <span class="defect-confidence">${confidence}%</span>
+                        </div>
+                        <div class="defect-details">
+                            Severity: ${defect.severity} | 
+                            Location: (${Math.round(defect.bbox.x1)}, ${Math.round(defect.bbox.y1)}) | 
+                            Size: ${Math.round(defect.bbox.width)}×${Math.round(defect.bbox.height)}px
+                        </div>
+                    `;
+                    
+                    defectList.appendChild(item);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
