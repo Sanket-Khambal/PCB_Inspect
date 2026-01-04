@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "flask>=3.1.2",
     "numpy>=2.2.6",
     "onnx-graphsurgeon>=0.5.8",
     "onnx2tf>=1.28.8",
