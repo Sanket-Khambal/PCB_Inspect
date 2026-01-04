@@ -22,7 +22,7 @@ class Config:
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
     
     # Model settings
-    MODEL_PATH = os.environ.get('MODEL_PATH', 'models/pcb_defect_yolov5n_model.pth')
+    MODEL_PATH = os.environ.get('MODEL_PATH', 'models/best.pt')
     CONF_THRESHOLD = float(os.environ.get('CONF_THRESHOLD', 0.25))
     IOU_THRESHOLD = float(os.environ.get('IOU_THRESHOLD', 0.45))
     
