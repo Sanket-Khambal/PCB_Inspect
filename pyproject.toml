@@ -1,0 +1,14 @@
+[project]
+name = "pcb-defect-detection"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=2.2.6",
+    "onnx-graphsurgeon>=0.5.8",
+    "onnx2tf>=1.28.8",
+    "onnxruntime>=1.23.2",
+    "pandas>=2.3.3",
+    "sng4onnx>=1.0.4",
+]
