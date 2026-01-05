@@ -1,8 +1,6 @@
 __pycache__/
 .env
 test/runs
-data/uploads/
-data/results/
 venv/
 .env/
 .ipynb_checkpoints/

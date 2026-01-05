@@ -11,6 +11,7 @@ dependencies = [
     "onnx2tf>=1.28.8",
     "onnxruntime>=1.23.2",
     "pandas>=2.3.3",
+    "seaborn>=0.13.2",
     "sng4onnx>=1.0.4",
     "ultralytics>=8.3.247",
     "werkzeug>=3.1.4",
