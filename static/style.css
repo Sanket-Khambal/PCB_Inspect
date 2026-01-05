@@ -1,0 +1,406 @@
+/* PCB Defect Detection - Main Stylesheet */
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    background: #f5f5f7;
+    min-height: 100vh;
+}
+
+/* Header */
+.header {
+    background: white;
+    border-bottom: 1px solid #e5e5e7;
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-icon {
+    width: 24px;
+    height: 24px;
+    color: #1d1d1f;
+}
+
+.header-title {
+    font-size: 19px;
+    font-weight: 400;
+    color: #1d1d1f;
+}
+
+/* Main Container - Two column split */
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: calc(100vh - 60px);
+}
+
+/* Left Panel */
+.left-panel {
+    background: white;
+    padding: 50px 60px;
+    overflow-y: auto;
+    border-right: 1px solid #e5e5e7;
+}
+
+/* Right Panel */
+.right-panel {
+    background: #f5f5f7;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px;
+}
+
+/* Section Headers */
+.section-header {
+    font-size: 11px;
+    font-weight: 600;
+    color: #86868b;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+}
+
+/* Upload Area */
+.upload-area {
+    border: 2px dashed #d1d1d6;
+    border-radius: 8px;
+    padding: 80px 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #fafafa;
+    margin-bottom: 50px;
+}
+
+.upload-area:hover {
+    border-color: #0071e3;
+    background: #f5f8ff;
+}
+
+.upload-area.dragover {
+    border-color: #0071e3;
+    background: #e8f2ff;
+}
+
+.upload-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 20px;
+    opacity: 0.3;
+    stroke: #86868b;
+}
+
+.upload-text {
+    font-size: 15px;
+    color: #1d1d1f;
+    margin-bottom: 6px;
+}
+
+.upload-subtext {
+    font-size: 13px;
+    color: #86868b;
+}
+
+#fileInput {
+    display: none;
+}
+
+/* Preview */
+.preview-container {
+    display: none;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.preview-image {
+    max-width: 100%;
+    max-height: 250px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* Parameters Section */
+.parameters-section {
+    margin-bottom: 40px;
+}
+
+.parameter-group {
+    margin-bottom: 40px;
+}
+
+.parameter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 16px;
+}
+
+.parameter-label {
+    font-size: 14px;
+    color: #1d1d1f;
+    font-weight: 400;
+}
+
+.parameter-value {
+    font-size: 14px;
+    color: #1d1d1f;
+    font-weight: 400;
+}
+
+/* Slider */
+input[type="range"] {
+    width: 100%;
+    height: 3px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: #d1d1d6;
+    border-radius: 3px;
+    outline: none;
+    margin: 12px 0 8px 0;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #1d1d1f;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: #1d1d1f;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.parameter-help {
+    font-size: 12px;
+    color: #86868b;
+    line-height: 1.4;
+}
+
+/* Analyze Button */
+.analyze-btn {
+    width: 100%;
+    background: #0071e3;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    display: none;
+}
+
+.analyze-btn:hover {
+    background: #0077ed;
+}
+
+.analyze-btn:disabled {
+    background: #d1d1d6;
+    cursor: not-allowed;
+}
+
+/* Right Panel - Empty State */
+.empty-state {
+    text-align: center;
+}
+
+.empty-state-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+    opacity: 0.2;
+    stroke: #86868b;
+}
+
+.empty-state-text {
+    font-size: 15px;
+    color: #86868b;
+}
+
+/* Loading */
+.loading {
+    display: none;
+    text-align: center;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e5e5e7;
+    border-top-color: #0071e3;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-size: 15px;
+    color: #86868b;
+}
+
+/* Results Container */
+.results-container {
+    display: none;
+    width: 100%;
+    max-width: 700px;
+}
+
+.verdict-badge {
+    display: inline-block;
+    padding: 10px 28px;
+    border-radius: 16px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    color: white;
+}
+
+.verdict-pass {
+    background: #30d158;
+}
+
+.verdict-marginal {
+    background: #ff9f0a;
+}
+
+.verdict-fail {
+    background: #ff453a;
+}
+
+/* Metrics */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.metric-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.metric-value {
+    font-size: 28px;
+    font-weight: 600;
+    color: #1d1d1f;
+    margin-bottom: 4px;
+}
+
+.metric-label {
+    font-size: 11px;
+    color: #86868b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Annotated Image */
+.annotated-image {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Defect List */
+.defect-list {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.defect-list-header {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d1d1f;
+    margin-bottom: 16px;
+}
+
+.defect-item {
+    padding: 12px;
+    border-left: 3px solid #d1d1d6;
+    margin-bottom: 10px;
+    background: #fafafa;
+    border-radius: 4px;
+}
+
+.defect-item.critical {
+    border-left-color: #ff453a;
+    background: #fff5f5;
+}
+
+.defect-item.warning {
+    border-left-color: #ff9f0a;
+    background: #fffbf0;
+}
+
+.defect-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.defect-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1d1d1f;
+}
+
+.defect-confidence {
+    font-size: 12px;
+    color: #0071e3;
+    font-weight: 600;
+}
+
+.defect-details {
+    font-size: 11px;
+    color: #86868b;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+    
+    .left-panel {
+        border-right: none;
+        border-bottom: 1px solid #e5e5e7;
+    }
+    
+    .right-panel {
+        min-height: 400px;
+    }
+    
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+}

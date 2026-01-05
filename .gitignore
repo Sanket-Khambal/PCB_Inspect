@@ -4,4 +4,6 @@ test/runs
 venv/
 .env/
 .ipynb_checkpoints/
+data/uploads/
+data/results/
 model.pth
